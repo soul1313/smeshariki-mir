@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто ты из Смешариков?</title>
+<style>
+/* ========================== */
+/* ======= BODY ============ */
+body{
+    margin:0;
+    padding:0;
+    font-family:'Comic Sans MS',cursive,sans-serif;
+    background: url('https://i.pinimg.com/1200x/ae/c5/85/aec585178ab65a5ee81700d2764a0b72.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow-x:hidden;
+}
+
+/* ========================== */
+/* ===== CONTAINER ========= */
+.container{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:20px;
+    z-index:1;
+}
+
+/* ========================== */
+/* ====== Заголовки ======== */
+h1,h2,h3{
+    color:#ff6f61;
+    text-align:center;
+    text-shadow:2px 2px 5px #fff;
+    margin:20px 0;
+}
+
+/* ========================== */
+/* ====== Кнопки =========== */
+button{
+    background:linear-gradient(45deg,#fbc2eb,#a6c1ee);
+    border:none;
+    padding:15px 30px;
+    font-size:20px;
+    font-weight:bold;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    margin:10px;
+    box-shadow:2px 2px 15px rgba(0,0,0,0.2);
+}
+button:hover{
+    transform:scale(1.1) rotate(-2deg);
+    box-shadow:5px 5px 20px rgba(0,0,0,0.3);
+}
+
+/* ========================== */
+/* ====== Тест контейнер ==== */
+.test-container{
+    background:rgba(255,255,255,0.95);
+    border-radius:25px;
+    padding:40px;
+    max-width:800px;
+    width:100%;
+    box-shadow:0px 0px 40px rgba(0,0,0,0.2);
+    animation:fadeIn 1s ease;
+}
+
+/* ========================== */
+/* ===== Вопросы =========== */
+.question{
+    font-size:26px;
+    margin-bottom:25px;
+    color:#ff6f61;
+    text-shadow:1px 1px 3px #fff;
+}
+
+/* ========================== */
+/* ====== Ответы =========== */
+.answers{
+    display:flex;
+    flex-direction:column;
+}
+.answer-btn{
+    background:linear-gradient(45deg,#ffecd2,#fcb69f);
+    border-radius:15px;
+    padding:15px;
+    font-size:20px;
+    margin:10px 0;
+    cursor:pointer;
+    border:none;
+    transition:all 0.3s ease;
+}
+.answer-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+}
+.answer-btn:active{
+    transform:scale(0.95);
+}
+
+/* ========================== */
+/* ===== Анимации =========== */
+@keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-20px);}
+}
+.character-img{
+    width:200px;
+    height:200px;
+    display:block;
+    margin:20px auto;
+    animation:bounce 2s infinite;
+}
+
+/* ========================== */
+/* ===== Результаты ========= */
+.result-container{
+    display:none;
+    text-align:center;
+    animation:fadeIn 1s ease;
+}
+
+/* Карточка результата */
+.result-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease;
+}
+.result-card h2{
+    color:#ff6f61;
+    margin-bottom:15px;
+}
+.result-card img{
+    width:200px;
+    height:200px;
+    border-radius:50%;
+    margin:15px 0;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+.result-card .result-text{
+    font-size:20px;
+    color:#333;
+    margin-bottom:20px;
+}
+
+/* ========================== */
+/* ===== Фоновые элементы === */
+.background-char{
+    position:absolute;
+    bottom:0;
+    width:150px;
+    animation:float 6s infinite alternate;
+}
+@keyframes float{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(-30px);}
+}
+
+/* ========================== */
+/* ===== Пузырьки ========== */
+.bubble{
+    position:absolute;
+    background:rgba(255,255,255,0.3);
+    border-radius:50%;
+    animation:bubble 12s infinite;
+}
+@keyframes bubble{
+    0%{transform:translateY(100vh) scale(0.5);opacity:0.5;}
+    50%{opacity:1;}
+    100%{transform:translateY(-50px) scale(1);opacity:0;}
+}
+
+/* ========================== */
+.hidden{display:none;}
+
+/* ========================== */
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+/* ========================== */
+@media(max-width:500px){
+    .question{ font-size:20px; }
+    .answer-btn{ font-size:16px; padding:10px; }
+    .character-img{ width:150px; height:150px; }
+    .result-card img{ width:160px; height:160px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🌈 Кто ты из Смешариков? 🌈</h1>
+<button id="startBtn">Начать тест</button>
+
+<div class="test-container hidden" id="testContainer">
+    <div class="question" id="questionText"></div>
+    <div class="answers" id="answersContainer"></div>
+</div>
+
+<div class="result-container" id="resultContainer">
+  <div class="result-card">
+    <h2>Твой Смешарик:</h2>
+    <img src="placeholder.png" alt="Смешарик" id="resultImage" class="character-img">
+    <div class="result-text" id="resultText"></div>
+    <button id="restartBtn">Пройти заново</button>
+  </div>
+</div>
+</div>
+
+<!-- Фоновые персонажи -->
+
+<script>
+const startBtn = document.getElementById('startBtn');
+const testContainer = document.getElementById('testContainer');
+const questionText = document.getElementById('questionText');
+const answersContainer = document.getElementById('answersContainer');
+const resultContainer = document.getElementById('resultContainer');
+const resultImage = document.getElementById('resultImage');
+const resultText = document.getElementById('resultText');
+const restartBtn = document.getElementById('restartBtn');
+
+/* ======= Вопросы ======= */
+const questions = [
+{question:"Твой любимый способ проводить выходные?",answers:[
+  {text:"Готовить что-то вкусное",type:["Крош"]},
+  {text:"Собраться с друзьями",type:["Ёжик"]},
+  {text:"Изучать что-то новое",type:["Совунья"]},
+  {text:"Просто отдыхать дома",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Ёжик","Совунья","Нюша"]}
+]},
+{question:"Как ты решаешь проблемы?",answers:[
+  {text:"Сначала планирую, потом действую",type:["Совунья"]},
+  {text:"Быстро и решительно",type:["Крош"]},
+  {text:"С помощью друзей",type:["Бараш"]},
+  {text:"Отвлекаюсь и думаю потом",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Твой любимый цвет?",answers:[
+  {text:"Синий",type:["Крош"]},
+  {text:"Розовый",type:["Нюша"]},
+  {text:"Фиолетовый",type:["Бараш"]},
+  {text:"Желтый",type:["Совунья"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Ты больше любишь...",answers:[
+  {text:"Спорт и активность",type:["Крош"]},
+  {text:"Мир и спокойствие",type:["Бараш"]},
+  {text:"Учёбу и знания",type:["Совунья"]},
+  {text:"Веселье и красоту",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Твоя сильная сторона?",answers:[
+  {text:"Дружелюбие",type:["Ёжик"]},
+  {text:"Творчество",type:["Бараш"]},
+  {text:"Любознательность",type:["Совунья"]},
+  {text:"Энергичность",type:["Крош"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Ёжик"]}
+]},
+{question:"Ты предпочитаешь:",answers:[
+  {text:"Планировать всё заранее",type:["Совунья"]},
+  {text:"Действовать спонтанно",type:["Крош"]},
+  {text:"Мечтать и фантазировать",type:["Бараш"]},
+  {text:"Общаться и веселиться",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Твоя любимая еда?",answers:[
+  {text:"Сладости",type:["Нюша"]},
+  {text:"Фрукты и овощи",type:["Совунья"]},
+  {text:"Пицца и гамбургеры",type:["Крош"]},
+  {text:"Творожные блюда",type:["Бараш"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Ты любишь приключения?",answers:[
+  {text:"Да, обожаю!",type:["Крош"]},
+  {text:"Иногда",type:["Ёжик"]},
+  {text:"Не особо",type:["Бараш"]},
+  {text:"С друзьями – всегда!",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Ёжик","Бараш","Нюша"]}
+]},
+{question:"Твой любимый жанр фильма?",answers:[
+  {text:"Комедия",type:["Крош"]},
+  {text:"Драма",type:["Бараш"]},
+  {text:"Документальный",type:["Совунья"]},
+  {text:"Мелодрама",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]},
+{question:"Твой характер можно описать как:",answers:[
+  {text:"Весёлый и энергичный",type:["Крош"]},
+  {text:"Спокойный и мечтательный",type:["Бараш"]},
+  {text:"Умный и рассудительный",type:["Совунья"]},
+  {text:"Забавный и милый",type:["Нюша"]},
+  {text:"Все вместе",type:["Крош","Бараш","Совунья","Нюша"]}
+]}
+];
+
+const resultsData = {
+"Крош": {text:"Ты Крош! Энергичный, весёлый и всегда готов к приключениям!", img:"https://i.pinimg.com/736x/87/56/02/875602beee25459bf74d9a69de467889.jpg"},
+"Бараш": {text:"Ты Бараш! Мечтательный и творческий, любишь спокойствие и искусство.", img:"https://i.pinimg.com/736x/13/ad/e2/13ade2154915846186d27335f82de120.jpg"},
+"Совунья": {text:"Ты Совунья! Умный, рассудительный и любознательный.", img:"https://i.pinimg.com/736x/c0/37/a4/c037a4301d0f45f747e814d17114200e.jpg"},
+"Нюша": {text:"Ты Нюша! Милый, энергичный и любит веселье и красоту.", img:"https://i.pinimg.com/736x/8f/22/56/8f22564db6e704d834d28a30dc4cc327.jpg"},
+"Ёжик": {text:"Ты Ёжик! Верный друг, спокойный и заботливый.", img:"https://i.pinimg.com/736x/f4/ce/70/f4ce70cd4a2aa6a655cb16bf82fd2c06.jpg"}
+};
+
+let currentQuestion = 0;
+let score = {};
+
+/* ====== События ===== */
+startBtn.addEventListener('click', ()=>{
+    startBtn.classList.add('hidden');
+    testContainer.classList.remove('hidden');
+    showQuestion();
+});
+
+restartBtn.addEventListener('click', ()=>{
+    score={};
+    currentQuestion=0;
+    resultContainer.style.display='none';
+    startBtn.classList.remove('hidden');
+});
+
+/* ====== Функции ===== */
+function showQuestion(){
+    const q = questions[currentQuestion];
+    questionText.innerText = q.question;
+    answersContainer.innerHTML = '';
+    q.answers.forEach(a => {
+        const btn = document.createElement('button');
+        btn.classList.add('answer-btn');
+        btn.innerText = a.text;
+        btn.addEventListener('click', ()=> selectAnswer(a.type));
+        answersContainer.appendChild(btn);
+    });
+}
+
+function selectAnswer(type){
+    if(Array.isArray(type)){
+        type.forEach(t => {
+            if(!score[t]) score[t]=0;
+            score[t]++;
+        });
+    } else {
+        if(!score[type]) score[type]=0;
+        score[type]++;
+    }
+    currentQuestion++;
+    if(currentQuestion < questions.length){
+        showQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult(){
+    testContainer.classList.add('hidden');
+    resultContainer.style.display='block';
+
+    const maxScore = Math.max(...Object.values(score));
+    const topTypes = Object.keys(score).filter(key => score[key] === maxScore);
+    const resultType = topTypes[Math.floor(Math.random() * topTypes.length)];
+
+    resultText.innerText = resultsData[resultType].text;
+    resultImage.src = resultsData[resultType].img;
+}
+
+</script>
+</body>
+</html>
